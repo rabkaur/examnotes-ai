@@ -46,6 +46,13 @@ if "question_bank" not in st.session_state:
 
 st.markdown("""
 <style>
+/* ── Force light mode ── */
+html, body, [data-testid="stAppViewContainer"],
+[data-testid="stApp"] {
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
+}
+
 /* ── Hide Streamlit chrome ── */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
@@ -66,154 +73,243 @@ a[href*="streamlit.io"] {display: none !important;}
 .st-emotion-cache-1wbqy5l {display: none;}
 .st-emotion-cache-zq5wmm {display: none;}
 .st-emotion-cache-15ecox0 {display: none;}
+[data-testid="stSidebar"] {display: none !important;}
 
-/* ── Page spacing ── */
+/* ── Page layout ── */
 .block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    max-width: 1100px;
+    padding-top: 0 !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1200px !important;
 }
 
-/* ── Hero header ── */
-.hero {
-    background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
+/* ── Top navbar ── */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+.navbar-logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1E293B;
+    letter-spacing: -0.3px;
+}
+.navbar-badge {
+    background: #F0FDF9;
+    color: #0D9488;
+    border: 1px solid #99F6E4;
+    border-radius: 20px;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ── Hero text ── */
+.hero-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+}
+.hero-sub {
+    font-size: 1rem;
+    color: #475569;
     margin-bottom: 2rem;
 }
-.hero h1 {
-    color: #ffffff;
-    font-size: 2.4rem;
+
+/* ── Section labels ── */
+.card-title {
+    font-size: 0.72rem;
     font-weight: 700;
-    margin: 0 0 0.4rem 0;
-}
-.hero p {
-    color: #CCFBF1;
-    font-size: 1.05rem;
-    margin: 0;
-}
-
-/* ── Section cards ── */
-.section-card {
-    background: rgba(13, 148, 136, 0.06);
-    border: 1px solid rgba(13, 148, 136, 0.2);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-/* ── Upload label ── */
-.upload-label {
-    font-size: 1rem;
-    font-weight: 600;
     color: #0D9488;
-    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+}
+.card-sub {
+    font-size: 0.9rem;
+    color: #475569;
+    margin-bottom: 1rem;
 }
 
-/* ── Generate button override ── */
+/* ── Upload zone ── */
+[data-testid="stFileUploader"] {
+    border: 2px dashed #CBD5E1 !important;
+    border-radius: 12px !important;
+    background: #FFFFFF !important;
+    padding: 1rem !important;
+}
+[data-testid="stFileUploader"]:hover {
+    border-color: #0D9488 !important;
+}
+
+/* ── Generate button ── */
 div[data-testid="stButton"] > button[kind="primary"] {
-    background-color: #0D9488;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 0.65rem 1.5rem;
-    color: white;
-    transition: background 0.2s;
+    background-color: #1E293B !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    padding: 0.65rem 2rem !important;
+    width: 100% !important;
+    transition: background 0.2s !important;
 }
 div[data-testid="stButton"] > button[kind="primary"]:hover {
-    background-color: #0F766E;
+    background-color: #0F172A !important;
 }
 
-/* ── Tab styling ── */
+/* ── How it works card ── */
+.how-card {
+    background: #F0FDF9;
+    border: 1px solid #99F6E4;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+}
+.how-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #0D9488;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+}
+.how-item {
+    font-size: 0.88rem;
+    color: #334155;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #CCFBF1;
+    line-height: 1.5;
+}
+.how-item:last-child {
+    border-bottom: none;
+}
+
+/* ── Results section ── */
+.results-header {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 2rem 0 1rem;
+}
+
+/* ── Tabs ── */
 button[data-baseweb="tab"] {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
-    color: #94A3B8;
-    border-radius: 8px 8px 0 0;
-    padding: 0.5rem 1rem;
+    color: #64748B;
 }
 button[data-baseweb="tab"][aria-selected="true"] {
     color: #0D9488 !important;
     border-bottom: 2px solid #0D9488 !important;
+    font-weight: 600 !important;
 }
 
-/* ── Metric cards ── */
+/* ── Metrics ── */
 [data-testid="stMetric"] {
-    background: rgba(13, 148, 136, 0.08);
-    border: 1px solid rgba(13, 148, 136, 0.15);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 10px;
     padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 [data-testid="stMetricLabel"] {
     font-size: 0.8rem;
-    color: #94A3B8;
+    color: #64748B !important;
 }
 [data-testid="stMetricValue"] {
-    color: #0D9488;
-    font-weight: 700;
+    color: #0D9488 !important;
+    font-weight: 700 !important;
 }
 
-/* ── Expander styling ── */
+/* ── Expanders ── */
 [data-testid="stExpander"] {
-    border: 1px solid rgba(13, 148, 136, 0.15);
-    border-radius: 8px;
-    margin-bottom: 0.4rem;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.4rem !important;
 }
 [data-testid="stExpander"]:hover {
-    border-color: #0D9488;
+    border-color: #0D9488 !important;
 }
 
 /* ── Download buttons ── */
 div[data-testid="stDownloadButton"] > button {
-    border: 1.5px solid #0D9488;
-    color: #0D9488;
-    background: transparent;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    border: 1.5px solid #0D9488 !important;
+    color: #0D9488 !important;
+    background: transparent !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
 }
 div[data-testid="stDownloadButton"] > button:hover {
-    background: #0D9488;
-    color: white;
+    background: #0D9488 !important;
+    color: white !important;
 }
 
-/* ── Sidebar ── */
-[data-testid="stSidebar"] {
-    border-right: 1px solid rgba(13, 148, 136, 0.15);
-}
-
-/* ── Divider color ── */
+/* ── Divider ── */
 hr {
-    border-color: rgba(13, 148, 136, 0.15) !important;
+    border-color: #E2E8F0 !important;
 }
 
-/* ── Success message ── */
+/* ── Alerts ── */
 [data-testid="stAlert"] {
-    border-radius: 10px;
+    border-radius: 10px !important;
 }
 
-/* ── Flashcard difficulty colors ── */
-.easy { border-left: 3px solid #0D9488; }
-.medium { border-left: 3px solid #F59E0B; }
-.hard { border-left: 3px solid #EF4444; }
+/* ── Footer ── */
+.footer {
+    text-align: center;
+    padding: 1.5rem 0 0.5rem;
+    color: #94A3B8;
+    font-size: 0.82rem;
+    border-top: 1px solid #E2E8F0;
+    margin-top: 2rem;
+}
+
+/* ── General text color fix for light mode ── */
+p, li, label, .stMarkdown {
+    color: #1E293B !important;
+}
+h1, h2, h3, h4 {
+    color: #1E293B !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# ── Navbar ──
 st.markdown("""
-<div class="hero">
-    <h1>📚 ExamNotes AI</h1>
-    <p>Upload your study material and get structured, exam-ready notes powered by AI.</p>
+<div class="navbar">
+    <span class="navbar-logo">📚 ExamNotes AI</span>
+    <span class="navbar-badge">● Free to use</span>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 📁 Upload Study Material")
-st.markdown(
-    "<p style='color:#94A3B8;font-size:0.9rem;margin-top:-0.8rem'>"
-    "Supports PDF, PPTX, DOCX and TXT — upload multiple files at once.</p>",
-    unsafe_allow_html=True
-)
+# ── Hero ──
+st.markdown("""
+<div style="margin-bottom: 2rem;">
+    <div class="hero-title">ExamNotes AI</div>
+    <div class="hero-sub">
+        Upload study material and get structured, exam-ready notes.
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ── Upload section ──
+st.markdown("""
+<div style="margin-bottom: 0.8rem;">
+    <div class="card-title">Study material</div>
+    <div class="card-sub">Drop your files to generate notes.</div>
+</div>
+""", unsafe_allow_html=True)
 
 col_upload, col_pyq = st.columns([2, 1])
 
@@ -227,14 +323,28 @@ with col_upload:
 
 pyq_selections = {}
 with col_pyq:
-    st.markdown("**📌 Tag Question Papers**")
-    st.markdown("Check any file that is a previous year question paper:")
+    st.markdown("""
+    <div class="card-title">Tag question papers</div>
+    <div class="card-sub">Mark files as previous year papers.</div>
+    """, unsafe_allow_html=True)
     if uploaded_files:
         for uploaded_file in uploaded_files:
             pyq_selections[f"pyq_{uploaded_file.name}"] = st.checkbox(
                 uploaded_file.name,
                 key=f"pyq_{uploaded_file.name}",
             )
+    else:
+        st.caption("No files uploaded yet.")
+
+    st.markdown("""
+    <div class="how-card">
+        <div class="how-title">How it works</div>
+        <div class="how-item">— AI structures your content into revision-ready sections</div>
+        <div class="how-item">— Supports PDF, PPTX, DOCX and plain text</div>
+        <div class="how-item">— Tag question papers for PYQ analysis</div>
+        <div class="how-item">— Download notes, flashcards, and question banks</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 if uploaded_files and st.button(
     "🚀 Generate Notes", type="primary", use_container_width=True
@@ -295,8 +405,9 @@ if uploaded_files and st.button(
         st.error(f"Something went wrong: {e}")
 
 if st.session_state.processing_done:
-    st.divider()
-    st.markdown("### 📖 Your Study Package")
+    st.markdown("""
+    <div class="results-header">Your Study Package</div>
+    """, unsafe_allow_html=True)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📝 Exam Notes",
@@ -404,12 +515,12 @@ if st.session_state.processing_done:
         )
 
     st.divider()
-    st.markdown("### ⬇️ Download Your Study Package")
-    st.markdown(
-        "<p style='color:#94A3B8;font-size:0.9rem;margin-top:-0.8rem'>"
-        "All files generated from your uploaded study material.</p>",
-        unsafe_allow_html=True
-    )
+    st.markdown("""
+    <div style="margin: 1rem 0 0.5rem;">
+        <div class="card-title">Downloads</div>
+        <div class="card-sub">All files generated from your uploaded study material.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -469,50 +580,9 @@ if st.session_state.processing_done:
                 use_container_width=True,
             )
 
-with st.sidebar:
-    st.markdown("""
-    <div style='padding:0.5rem 0'>
-        <h2 style='color:#0D9488;font-size:1.1rem;margin-bottom:1rem'>
-            📚 ExamNotes AI
-        </h2>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("**ℹ️ How to Use**")
-    st.markdown("""
-    1. Upload your study files
-    2. Tag any question papers as PYQ
-    3. Click **Generate Notes**
-    4. View notes, analysis, and flashcards
-    5. Download your study package
-    """)
-
-    st.divider()
-
-    st.markdown("**📋 Supported Formats**")
-    st.markdown("""
-    | Format | Extension |
-    |--------|-----------|
-    | PDF | .pdf |
-    | PowerPoint | .pptx |
-    | Word | .docx |
-    | Text | .txt |
-    """)
-
-    st.divider()
-
-    st.markdown(
-        "<p style='color:#0D9488;font-size:0.85rem;font-weight:600'>"
-        "⚡ Powered by Groq</p>",
-        unsafe_allow_html=True
-    )
-    st.caption("llama-3.3-70b-versatile · Free tier")
-
 st.markdown("""
-<div style='text-align:center;padding:1.5rem 0 0.5rem;
-color:#475569;font-size:0.82rem;border-top:1px solid rgba(13,148,136,0.15);
-margin-top:1rem'>
+<div class="footer">
     ExamNotes AI · Built with Streamlit + Groq ·
-    <span style='color:#0D9488'>Free to use</span>
+    <span style="color:#0D9488">Free to use</span>
 </div>
 """, unsafe_allow_html=True)
