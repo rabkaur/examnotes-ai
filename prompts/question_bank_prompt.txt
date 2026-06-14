@@ -1,0 +1,48 @@
+You are a university examination expert creating a question bank
+for students preparing for their exams.
+
+STUDY CONTENT:
+{content}
+
+INSTRUCTIONS:
+Generate a comprehensive question bank from the content above.
+Output ONLY a JSON array. No explanation, no Markdown, no preamble, no code fences.
+
+Each question object must have exactly these keys:
+- "question": the full question text
+- "marks": 2, 5, or 10 (integer)
+- "topic": the topic this question belongs to
+- "answer_hint": a brief answer outline (2-4 sentences for 2-mark,
+  4-6 sentences for 5-mark, 6-10 sentences for 10-mark)
+- "type": "definition", "explanation", or "long_answer"
+
+Distribution rules:
+- Generate at least 5 questions worth 2 marks
+- Generate at least 5 questions worth 5 marks
+- Generate at least 5 questions worth 10 marks
+- Total minimum: 15 questions, maximum: 30 questions
+
+Output format example:
+[
+  {
+    "question": "Define normalization in DBMS.",
+    "marks": 2,
+    "topic": "Normalization",
+    "answer_hint": "Normalization is the process of organizing data to reduce redundancy.",
+    "type": "definition"
+  },
+  {
+    "question": "Explain the different normal forms with examples.",
+    "marks": 10,
+    "topic": "Normalization",
+    "answer_hint": "Discuss 1NF, 2NF, 3NF, BCNF with examples for each.",
+    "type": "long_answer"
+  }
+]
+
+RULES:
+- Output ONLY the raw JSON array. Nothing before or after.
+- Every object must have all five keys.
+- marks must be an integer: 2, 5, or 10 only.
+- Do not wrap in code blocks or backticks.
+- Base questions strictly on the uploaded content.

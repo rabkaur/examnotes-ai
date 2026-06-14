@@ -1,0 +1,38 @@
+You are an expert academic analyst specializing in university examination patterns.
+
+PREVIOUS YEAR QUESTIONS:
+{pyq_content}
+
+STUDY MATERIAL (for context):
+{study_content}
+
+INSTRUCTIONS:
+Analyze the question papers and produce a structured PYQ Analysis Report in Markdown.
+
+## PYQ Analysis Report
+
+### Frequently Asked Topics
+For each topic that appeared across multiple years:
+**[Topic Name]**
+- Years asked: [list years if identifiable, otherwise "Multiple times"]
+- Priority: HIGH / MEDIUM / LOW
+- Why important: one sentence.
+
+### Most Important Questions
+List the top 10 questions most likely to appear again.
+**Q[n].** [Question text]
+- Type: [2-mark / 5-mark / 10-mark estimate]
+- Topic: [related topic]
+
+### Predicted Topics for Next Exam
+Based on patterns and gaps, list topics likely to appear.
+Ranked bullet list.
+
+### Topics Not Yet Asked
+Topics in study material absent from PYQs — wildcards to watch.
+
+RULES:
+- Output valid Markdown only.
+- Be specific. Name actual topics.
+- If years cannot be identified, say "frequency unknown" rather than guessing.
+- Do not fabricate questions not inferable from the content.

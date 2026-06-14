@@ -1,0 +1,8 @@
+streamlit
+python-dotenv
+groq
+PyMuPDF
+python-pptx
+python-docx
+weasyprint
+markdown
