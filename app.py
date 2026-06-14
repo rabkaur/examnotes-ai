@@ -47,18 +47,24 @@ if "question_bank" not in st.session_state:
 st.markdown(
     """
 <style>
-
-
-/* Hide Streamlit branding */
+/* Hide all Streamlit branding */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
-
-/* Hide the Made with Streamlit badge */
+[data-testid="stToolbar"] {visibility: hidden;}
+[data-testid="stDecoration"] {display: none;}
+[data-testid="stDecorationColorBackground"] {display: none;}
+div[data-testid="stToolbarActions"] {display: none;}
+.st-emotion-cache-1wbqy5l {display: none;}
+.st-emotion-cache-zq5wmm {display: none;}
+.st-emotion-cache-15ecox0 {display: none;}
 .viewerBadge_container__1QSob {display: none;}
 .viewerBadge_link__1S137 {display: none;}
-[data-testid="stToolbar"] {display: none;}
 [data-testid="manage-app-button"] {display: none;}
+[data-testid="stStatusWidget"] {display: none;}
+.egzxvld1 {display: none;}
+.e1vs0wn31 {display: none;}
+
 /* Clean card style for result sections */
 .result-card {
     background-color: #f8f9fa;
@@ -90,9 +96,6 @@ footer {visibility: hidden;}
 .flashcard.hard {
     border-left-color: #f44336;
 }
-
-/* Hide default Streamlit footer */
-footer {visibility: hidden;}
 </style>
 """,
     unsafe_allow_html=True,
