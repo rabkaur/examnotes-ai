@@ -53,6 +53,19 @@ html, body, [data-testid="stAppViewContainer"],
     color: #1E293B !important;
 }
 
+/* Force light upload zone */
+[data-testid="stFileUploaderDropzone"] {
+    background-color: #FFFFFF !important;
+    color: #1E293B !important;
+}
+[data-testid="stFileUploaderDropzone"] * {
+    color: #1E293B !important;
+}
+section[data-testid="stFileUploaderDropzone"] button {
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
+}
+
 /* ── Hide Streamlit chrome ── */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
