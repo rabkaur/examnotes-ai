@@ -44,10 +44,9 @@ if "processing_done" not in st.session_state:
 if "question_bank" not in st.session_state:
     st.session_state.question_bank = []
 
-st.markdown(
-    """
+st.markdown("""
 <style>
-/* Hide all Streamlit branding */
+/* ── Hide Streamlit chrome ── */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
@@ -55,64 +54,166 @@ footer {visibility: hidden;}
 [data-testid="stDecoration"] {display: none;}
 [data-testid="stDecorationColorBackground"] {display: none;}
 div[data-testid="stToolbarActions"] {display: none;}
+[data-testid="manage-app-button"] {display: none;}
+[data-testid="stStatusWidget"] {display: none;}
+.viewerBadge_container__1QSob {display: none;}
+.viewerBadge_link__1S137 {display: none;}
+._container_gzau3_1 {display: none !important;}
+._viewerBadge_nim44_23 {display: none !important;}
+a[href*="streamlit.io"] {display: none !important;}
+.egzxvld1 {display: none;}
+.e1vs0wn31 {display: none;}
 .st-emotion-cache-1wbqy5l {display: none;}
 .st-emotion-cache-zq5wmm {display: none;}
 .st-emotion-cache-15ecox0 {display: none;}
-.viewerBadge_container__1QSob {display: none;}
-.viewerBadge_link__1S137 {display: none;}
-[data-testid="manage-app-button"] {display: none;}
-[data-testid="stStatusWidget"] {display: none;}
-.egzxvld1 {display: none;}
-.e1vs0wn31 {display: none;}
 
-.e1vs0wn31 {display: none;}
-._container_gzau3_1 {display: none !important;}
-._viewerBadge_nim44_23 {display: none !important;}
-a[href="https://streamlit.io/cloud"] {display: none !important;}
-
-/* Clean card style for result sections */
-.result-card {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #e0e0e0;
+/* ── Page spacing ── */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    max-width: 1100px;
 }
 
-/* Upload area styling */
-.upload-header {
-    font-size: 1.1rem;
+/* ── Hero header ── */
+.hero {
+    background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+}
+.hero h1 {
+    color: #ffffff;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem 0;
+}
+.hero p {
+    color: #CCFBF1;
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+/* ── Section cards ── */
+.section-card {
+    background: rgba(13, 148, 136, 0.06);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Upload label ── */
+.upload-label {
+    font-size: 1rem;
     font-weight: 600;
+    color: #0D9488;
     margin-bottom: 0.5rem;
 }
 
-/* Flashcard styling */
-.flashcard {
-    background: white;
+/* ── Generate button override ── */
+div[data-testid="stButton"] > button[kind="primary"] {
+    background-color: #0D9488;
+    border: none;
     border-radius: 10px;
-    padding: 1rem 1.2rem;
-    margin-bottom: 0.8rem;
-    border-left: 4px solid #4CAF50;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    color: white;
+    transition: background 0.2s;
 }
-.flashcard.medium {
-    border-left-color: #FF9800;
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+    background-color: #0F766E;
 }
-.flashcard.hard {
-    border-left-color: #f44336;
+
+/* ── Tab styling ── */
+button[data-baseweb="tab"] {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #94A3B8;
+    border-radius: 8px 8px 0 0;
+    padding: 0.5rem 1rem;
 }
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #0D9488 !important;
+    border-bottom: 2px solid #0D9488 !important;
+}
+
+/* ── Metric cards ── */
+[data-testid="stMetric"] {
+    background: rgba(13, 148, 136, 0.08);
+    border: 1px solid rgba(13, 148, 136, 0.15);
+    border-radius: 10px;
+    padding: 1rem;
+}
+[data-testid="stMetricLabel"] {
+    font-size: 0.8rem;
+    color: #94A3B8;
+}
+[data-testid="stMetricValue"] {
+    color: #0D9488;
+    font-weight: 700;
+}
+
+/* ── Expander styling ── */
+[data-testid="stExpander"] {
+    border: 1px solid rgba(13, 148, 136, 0.15);
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+}
+[data-testid="stExpander"]:hover {
+    border-color: #0D9488;
+}
+
+/* ── Download buttons ── */
+div[data-testid="stDownloadButton"] > button {
+    border: 1.5px solid #0D9488;
+    color: #0D9488;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+div[data-testid="stDownloadButton"] > button:hover {
+    background: #0D9488;
+    color: white;
+}
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(13, 148, 136, 0.15);
+}
+
+/* ── Divider color ── */
+hr {
+    border-color: rgba(13, 148, 136, 0.15) !important;
+}
+
+/* ── Success message ── */
+[data-testid="stAlert"] {
+    border-radius: 10px;
+}
+
+/* ── Flashcard difficulty colors ── */
+.easy { border-left: 3px solid #0D9488; }
+.medium { border-left: 3px solid #F59E0B; }
+.hard { border-left: 3px solid #EF4444; }
 </style>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
-st.title("📚 ExamNotes AI")
+st.markdown("""
+<div class="hero">
+    <h1>📚 ExamNotes AI</h1>
+    <p>Upload your study material and get structured, exam-ready notes powered by AI.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("### 📁 Upload Study Material")
 st.markdown(
-    "Upload your study material and get structured, exam-ready notes powered by AI."
+    "<p style='color:#94A3B8;font-size:0.9rem;margin-top:-0.8rem'>"
+    "Supports PDF, PPTX, DOCX and TXT — upload multiple files at once.</p>",
+    unsafe_allow_html=True
 )
-st.divider()
-
-st.subheader("📁 Upload Study Material")
 
 col_upload, col_pyq = st.columns([2, 1])
 
@@ -195,7 +296,7 @@ if uploaded_files and st.button(
 
 if st.session_state.processing_done:
     st.divider()
-    st.subheader("📖 Your Study Package")
+    st.markdown("### 📖 Your Study Package")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "📝 Exam Notes",
@@ -303,7 +404,12 @@ if st.session_state.processing_done:
         )
 
     st.divider()
-    st.subheader("⬇️ Download Your Study Package")
+    st.markdown("### ⬇️ Download Your Study Package")
+    st.markdown(
+        "<p style='color:#94A3B8;font-size:0.9rem;margin-top:-0.8rem'>"
+        "All files generated from your uploaded study material.</p>",
+        unsafe_allow_html=True
+    )
 
     col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -364,30 +470,49 @@ if st.session_state.processing_done:
             )
 
 with st.sidebar:
-    st.markdown("## ℹ️ How to Use")
-    st.markdown(
-        """
-    1. Upload your study files
-    2. Tag any question papers
-    3. Click Generate Notes
-    4. View notes, PYQ analysis, and flashcards
-    5. Download your study package
-    """
-    )
-    st.divider()
-    st.markdown("## 📋 Supported Formats")
-    st.markdown(
-        """
-    - 📄 PDF files
-    - 📊 PowerPoint (PPTX)
-    - 📝 Word documents (DOCX)
-    - 📃 Plain text (TXT)
-    """
-    )
-    st.divider()
-    st.markdown("## ⚡ Powered by")
-    st.markdown("Groq — llama-3.3-70b-versatile")
-    st.caption("Free tier — no billing required")
+    st.markdown("""
+    <div style='padding:0.5rem 0'>
+        <h2 style='color:#0D9488;font-size:1.1rem;margin-bottom:1rem'>
+            📚 ExamNotes AI
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
 
-st.divider()
-st.caption("ExamNotes AI · Built with Streamlit + Groq · Free to use")
+    st.markdown("**ℹ️ How to Use**")
+    st.markdown("""
+    1. Upload your study files
+    2. Tag any question papers as PYQ
+    3. Click **Generate Notes**
+    4. View notes, analysis, and flashcards
+    5. Download your study package
+    """)
+
+    st.divider()
+
+    st.markdown("**📋 Supported Formats**")
+    st.markdown("""
+    | Format | Extension |
+    |--------|-----------|
+    | PDF | .pdf |
+    | PowerPoint | .pptx |
+    | Word | .docx |
+    | Text | .txt |
+    """)
+
+    st.divider()
+
+    st.markdown(
+        "<p style='color:#0D9488;font-size:0.85rem;font-weight:600'>"
+        "⚡ Powered by Groq</p>",
+        unsafe_allow_html=True
+    )
+    st.caption("llama-3.3-70b-versatile · Free tier")
+
+st.markdown("""
+<div style='text-align:center;padding:1.5rem 0 0.5rem;
+color:#475569;font-size:0.82rem;border-top:1px solid rgba(13,148,136,0.15);
+margin-top:1rem'>
+    ExamNotes AI · Built with Streamlit + Groq ·
+    <span style='color:#0D9488'>Free to use</span>
+</div>
+""", unsafe_allow_html=True)
