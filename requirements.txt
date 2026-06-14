@@ -4,5 +4,5 @@ groq
 PyMuPDF
 python-pptx
 python-docx
-weasyprint
+fpdf2
 markdown

@@ -15,13 +15,15 @@ from services.pyq_analyzer import run_pyq_analyzer
 from services.flashcard_generator import run_flashcard_generator
 from services.question_bank_generator import run_question_bank_generator
 from services.exporter import (
+    export_notes_pdf,
+    export_pyq_pdf,
+    export_flashcards_pdf,
+    export_question_bank_pdf,
     export_markdown,
-    export_pdf,
     export_flashcards_csv,
     export_anki,
     export_question_bank_csv,
 )
-
 st.set_page_config(
     page_title="ExamNotes AI",
     page_icon="📚",
