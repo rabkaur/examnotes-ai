@@ -48,22 +48,9 @@ st.markdown("""
 <style>
 /* ── Force light mode ── */
 html, body, [data-testid="stAppViewContainer"],
-[data-testid="stApp"] {
+[data-testid="stApp"], .stApp {
     background-color: #F8FAFC !important;
     color: #1E293B !important;
-}
-
-/* Force light upload zone */
-[data-testid="stFileUploaderDropzone"] {
-    background-color: #FFFFFF !important;
-    color: #1E293B !important;
-}
-[data-testid="stFileUploaderDropzone"] * {
-    color: #1E293B !important;
-}
-section[data-testid="stFileUploaderDropzone"] button {
-    background-color: #1E293B !important;
-    color: #FFFFFF !important;
 }
 
 /* ── Hide Streamlit chrome ── */
@@ -97,6 +84,14 @@ a[href*="streamlit.io"] {display: none !important;}
     max-width: 1200px !important;
 }
 
+/* ── General text color ── */
+p, li, label, .stMarkdown, div, span {
+    color: #1E293B;
+}
+h1, h2, h3, h4 {
+    color: #1E293B !important;
+}
+
 /* ── Top navbar ── */
 .navbar {
     display: flex;
@@ -109,12 +104,12 @@ a[href*="streamlit.io"] {display: none !important;}
 .navbar-logo {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1E293B;
+    color: #1E293B !important;
     letter-spacing: -0.3px;
 }
 .navbar-badge {
     background: #F0FDF9;
-    color: #0D9488;
+    color: #0D9488 !important;
     border: 1px solid #99F6E4;
     border-radius: 20px;
     padding: 0.25rem 0.85rem;
@@ -126,13 +121,13 @@ a[href*="streamlit.io"] {display: none !important;}
 .hero-title {
     font-size: 2.2rem;
     font-weight: 700;
-    color: #1E293B;
+    color: #1E293B !important;
     margin-bottom: 0.4rem;
     line-height: 1.2;
 }
 .hero-sub {
     font-size: 1rem;
-    color: #475569;
+    color: #475569 !important;
     margin-bottom: 2rem;
 }
 
@@ -140,26 +135,62 @@ a[href*="streamlit.io"] {display: none !important;}
 .card-title {
     font-size: 0.72rem;
     font-weight: 700;
-    color: #0D9488;
+    color: #0D9488 !important;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.3rem;
 }
 .card-sub {
     font-size: 0.9rem;
-    color: #475569;
+    color: #475569 !important;
     margin-bottom: 1rem;
 }
 
-/* ── Upload zone ── */
+/* ── Upload zone outer wrapper ── */
 [data-testid="stFileUploader"] {
     border: 2px dashed #CBD5E1 !important;
     border-radius: 12px !important;
     background: #FFFFFF !important;
-    padding: 1rem !important;
+    padding: 0.5rem !important;
 }
 [data-testid="stFileUploader"]:hover {
     border-color: #0D9488 !important;
+}
+
+/* ── Upload dropzone inner ── */
+[data-testid="stFileUploaderDropzone"] {
+    background-color: #FFFFFF !important;
+    border: none !important;
+    padding: 1rem !important;
+}
+
+/* ── Upload button always visible ── */
+[data-testid="stFileUploaderDropzone"] button,
+[data-testid="stFileUploader"] button {
+    background-color: #F1F5F9 !important;
+    color: #1E293B !important;
+    border: 1.5px solid #94A3B8 !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
+}
+[data-testid="stFileUploaderDropzone"] button:hover,
+[data-testid="stFileUploader"] button:hover {
+    background-color: #E2E8F0 !important;
+    border-color: #0D9488 !important;
+    color: #0D9488 !important;
+}
+
+/* ── Upload zone text ── */
+[data-testid="stFileUploaderDropzone"] span,
+[data-testid="stFileUploaderDropzone"] p,
+[data-testid="stFileUploaderDropzone"] small,
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] small {
+    color: #475569 !important;
+    opacity: 1 !important;
 }
 
 /* ── Generate button ── */
@@ -169,10 +200,11 @@ div[data-testid="stButton"] > button[kind="primary"] {
     border-radius: 10px !important;
     font-size: 0.95rem !important;
     font-weight: 600 !important;
-    color: white !important;
+    color: #FFFFFF !important;
     padding: 0.65rem 2rem !important;
     width: 100% !important;
     transition: background 0.2s !important;
+    margin-top: 1rem !important;
 }
 div[data-testid="stButton"] > button[kind="primary"]:hover {
     background-color: #0F172A !important;
@@ -189,14 +221,14 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 .how-title {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #0D9488;
+    color: #0D9488 !important;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 0.8rem;
 }
 .how-item {
     font-size: 0.88rem;
-    color: #334155;
+    color: #334155 !important;
     padding: 0.3rem 0;
     border-bottom: 1px solid #CCFBF1;
     line-height: 1.5;
@@ -205,11 +237,11 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
     border-bottom: none;
 }
 
-/* ── Results section ── */
+/* ── Results header ── */
 .results-header {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #1E293B;
+    color: #1E293B !important;
     margin: 2rem 0 1rem;
 }
 
@@ -217,7 +249,8 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 button[data-baseweb="tab"] {
     font-size: 0.88rem;
     font-weight: 500;
-    color: #64748B;
+    color: #64748B !important;
+    background: transparent !important;
 }
 button[data-baseweb="tab"][aria-selected="true"] {
     color: #0D9488 !important;
@@ -227,14 +260,14 @@ button[data-baseweb="tab"][aria-selected="true"] {
 
 /* ── Metrics ── */
 [data-testid="stMetric"] {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
 }
-[data-testid="stMetricLabel"] {
-    font-size: 0.8rem;
+[data-testid="stMetricLabel"] p {
+    font-size: 0.8rem !important;
     color: #64748B !important;
 }
 [data-testid="stMetricValue"] {
@@ -252,6 +285,9 @@ button[data-baseweb="tab"][aria-selected="true"] {
 [data-testid="stExpander"]:hover {
     border-color: #0D9488 !important;
 }
+[data-testid="stExpander"] summary {
+    color: #1E293B !important;
+}
 
 /* ── Download buttons ── */
 div[data-testid="stDownloadButton"] > button {
@@ -268,48 +304,40 @@ div[data-testid="stDownloadButton"] > button:hover {
     color: white !important;
 }
 
+/* ── Info boxes ── */
+[data-testid="stAlert"] {
+    border-radius: 10px !important;
+    background: #F0FDF9 !important;
+    border: 1px solid #99F6E4 !important;
+    color: #1E293B !important;
+}
+
 /* ── Divider ── */
 hr {
     border-color: #E2E8F0 !important;
 }
 
-/* ── Alerts ── */
-[data-testid="stAlert"] {
-    border-radius: 10px !important;
+/* ── Text area ── */
+textarea {
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+}
+
+/* ── Caption text ── */
+.stCaption, [data-testid="stCaptionContainer"] {
+    color: #64748B !important;
 }
 
 /* ── Footer ── */
 .footer {
     text-align: center;
     padding: 1.5rem 0 0.5rem;
-    color: #94A3B8;
+    color: #94A3B8 !important;
     font-size: 0.82rem;
     border-top: 1px solid #E2E8F0;
     margin-top: 2rem;
-}
-
-/* ── General text color fix for light mode ── */
-p, li, label, .stMarkdown {
-    color: #1E293B !important;
-}
-h1, h2, h3, h4 {
-    color: #1E293B !important;
-}
-/* Force light upload button */
-[data-testid="stFileUploaderDropzone"] button {
-    background-color: #F1F5F9 !important;
-    color: #1E293B !important;
-    border: 1px solid #CBD5E1 !important;
-    border-radius: 8px !important;
-}
-[data-testid="stFileUploaderDropzone"] button:hover {
-    background-color: #E2E8F0 !important;
-}
-[data-testid="stFileUploaderDropzone"] small {
-    color: #64748B !important;
-}
-[data-testid="stFileUploaderDropzone"] span {
-    color: #1E293B !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -363,7 +391,10 @@ with col_pyq:
                 key=f"pyq_{uploaded_file.name}",
             )
     else:
-        st.caption("No files uploaded yet.")
+        st.markdown(
+            "<p style='color:#94A3B8;font-size:0.85rem;'>No files uploaded yet.</p>",
+            unsafe_allow_html=True
+        )
 
     st.markdown("""
     <div class="how-card">
