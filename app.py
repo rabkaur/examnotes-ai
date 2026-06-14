@@ -47,6 +47,18 @@ if "question_bank" not in st.session_state:
 st.markdown(
     """
 <style>
+
+
+/* Hide Streamlit branding */
+#MainMenu {visibility: hidden;}
+header {visibility: hidden;}
+footer {visibility: hidden;}
+
+/* Hide the Made with Streamlit badge */
+.viewerBadge_container__1QSob {display: none;}
+.viewerBadge_link__1S137 {display: none;}
+[data-testid="stToolbar"] {display: none;}
+[data-testid="manage-app-button"] {display: none;}
 /* Clean card style for result sections */
 .result-card {
     background-color: #f8f9fa;
