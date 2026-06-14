@@ -295,6 +295,22 @@ p, li, label, .stMarkdown {
 h1, h2, h3, h4 {
     color: #1E293B !important;
 }
+/* Force light upload button */
+[data-testid="stFileUploaderDropzone"] button {
+    background-color: #F1F5F9 !important;
+    color: #1E293B !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+}
+[data-testid="stFileUploaderDropzone"] button:hover {
+    background-color: #E2E8F0 !important;
+}
+[data-testid="stFileUploaderDropzone"] small {
+    color: #64748B !important;
+}
+[data-testid="stFileUploaderDropzone"] span {
+    color: #1E293B !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
