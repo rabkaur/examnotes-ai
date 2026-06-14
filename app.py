@@ -470,7 +470,7 @@ if uploaded_files and st.button(
                 st.session_state.study_content
             )
 
-        time.sleep(15)
+        time.sleep(30)
 
         if st.session_state.pyq_content:
             with st.spinner("Analyzing previous year questions..."):
@@ -478,7 +478,7 @@ if uploaded_files and st.button(
                     st.session_state.pyq_content,
                     st.session_state.study_content,
                 )
-            time.sleep(15)
+            time.sleep(30)
         else:
             st.session_state.pyq_report = ""
 
@@ -487,7 +487,7 @@ if uploaded_files and st.button(
                 st.session_state.study_content
             )
 
-        time.sleep(15)
+        time.sleep(30)
 
         with st.spinner("Generating question bank..."):
             st.session_state.question_bank = run_question_bank_generator(
