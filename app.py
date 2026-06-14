@@ -65,6 +65,11 @@ div[data-testid="stToolbarActions"] {display: none;}
 .egzxvld1 {display: none;}
 .e1vs0wn31 {display: none;}
 
+.e1vs0wn31 {display: none;}
+._container_gzau3_1 {display: none !important;}
+._viewerBadge_nim44_23 {display: none !important;}
+a[href="https://streamlit.io/cloud"] {display: none !important;}
+
 /* Clean card style for result sections */
 .result-card {
     background-color: #f8f9fa;
