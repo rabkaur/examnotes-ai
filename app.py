@@ -339,6 +339,43 @@ textarea {
     border-top: 1px solid #E2E8F0;
     margin-top: 2rem;
 }
+/* ── Fix generate button text visibility ── */
+div[data-testid="stButton"] > button[kind="primary"] * {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+div[data-testid="stButton"] > button[kind="primary"] p {
+    color: #FFFFFF !important;
+    display: inline !important;
+}
+
+/* ── Fix file upload pills/chips dark background ── */
+[data-testid="stFileUploaderFile"] {
+    background-color: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+}
+[data-testid="stFileUploaderFile"] * {
+    color: #1E293B !important;
+}
+[data-testid="stFileUploaderFileName"] {
+    color: #1E293B !important;
+}
+[data-testid="stFileUploaderFileData"] {
+    color: #64748B !important;
+}
+
+/* ── Fix active tab underline color ── */
+[data-baseweb="tab-highlight"] {
+    background-color: #0D9488 !important;
+}
+[data-baseweb="tab-border"] {
+    background-color: #E2E8F0 !important;
+}
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #0D9488 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
