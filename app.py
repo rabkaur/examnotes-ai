@@ -462,42 +462,84 @@ if uploaded_files and st.button(
             for file, path in zip(uploaded_files, saved_paths)
         }
 
-        with st.spinner("Extracting text from files..."):
-            extracted = extract_all(saved_paths, pyq_flags)
-            st.session_state.study_content = extracted["study_content"]
-            st.session_state.pyq_content = extracted["pyq_content"]
+        progress_bar = st.progress(0)
+        status = st.empty()
 
-        with st.spinner("Generating exam notes with Groq AI..."):
-            st.session_state.notes = run_note_generator(
-                st.session_state.study_content
-            )
+        status.markdown("""
+        <div style='background:#F0FDF9;border:2px solid #0D9488;border-radius:10px;
+        padding:1rem 1.2rem;font-size:1rem;color:#0D9488;font-weight:700;'>
+            📂 Extracting text from your files...
+        </div>
+        """, unsafe_allow_html=True)
 
+        extracted = extract_all(saved_paths, pyq_flags)
+        st.session_state.study_content = extracted["study_content"]
+        st.session_state.pyq_content = extracted["pyq_content"]
+        progress_bar.progress(15)
+
+        status.markdown("""
+        <div style='background:#FFF7ED;border:2px solid #F97316;border-radius:10px;
+        padding:1rem 1.2rem;font-size:1rem;color:#C2410C;font-weight:700;'>
+            🤖 Generating exam notes with AI — please wait 30-60 seconds...
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.session_state.notes = run_note_generator(
+            st.session_state.study_content
+        )
+        progress_bar.progress(40)
         time.sleep(30)
 
         if st.session_state.pyq_content:
-            with st.spinner("Analyzing previous year questions..."):
-                st.session_state.pyq_report = run_pyq_analyzer(
-                    st.session_state.pyq_content,
-                    st.session_state.study_content,
-                )
+            status.markdown("""
+            <div style='background:#FFF7ED;border:2px solid #F97316;border-radius:10px;
+            padding:1rem 1.2rem;font-size:1rem;color:#C2410C;font-weight:700;'>
+                📊 Analysing previous year question papers...
+            </div>
+            """, unsafe_allow_html=True)
+            st.session_state.pyq_report = run_pyq_analyzer(
+                st.session_state.pyq_content,
+                st.session_state.study_content,
+            )
+            progress_bar.progress(60)
             time.sleep(30)
         else:
             st.session_state.pyq_report = ""
+            progress_bar.progress(60)
 
-        with st.spinner("Generating flashcards..."):
-            st.session_state.flashcards = run_flashcard_generator(
-                st.session_state.study_content
-            )
+        status.markdown("""
+        <div style='background:#FFF7ED;border:2px solid #F97316;border-radius:10px;
+        padding:1rem 1.2rem;font-size:1rem;color:#C2410C;font-weight:700;'>
+            🃏 Generating flashcards...
+        </div>
+        """, unsafe_allow_html=True)
 
+        st.session_state.flashcards = run_flashcard_generator(
+            st.session_state.study_content
+        )
+        progress_bar.progress(80)
         time.sleep(30)
 
-        with st.spinner("Generating question bank..."):
-            st.session_state.question_bank = run_question_bank_generator(
-                st.session_state.study_content
-            )
+        status.markdown("""
+        <div style='background:#FFF7ED;border:2px solid #F97316;border-radius:10px;
+        padding:1rem 1.2rem;font-size:1rem;color:#C2410C;font-weight:700;'>
+            ❓ Building your question bank...
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.session_state.question_bank = run_question_bank_generator(
+            st.session_state.study_content
+        )
+        progress_bar.progress(100)
+
+        status.markdown("""
+        <div style='background:#F0FDF9;border:2px solid #0D9488;border-radius:10px;
+        padding:1rem 1.2rem;font-size:1rem;color:#0D9488;font-weight:700;'>
+            ✅ Done! Your study package is ready below.
+        </div>
+        """, unsafe_allow_html=True)
 
         st.session_state.processing_done = True
-        st.success("✅ Done! Your study package is ready below.")
         st.balloons()
 
     except Exception as e:
