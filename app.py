@@ -501,7 +501,14 @@ if uploaded_files and st.button(
         st.balloons()
 
     except Exception as e:
-        st.error(f"Something went wrong: {e}")
+        error_str = str(e)
+        if "tokens per day" in error_str or "TPD" in error_str or "100000" in error_str:
+            st.error("⚠️ Daily AI quota exceeded. The free tier allows 100,000 tokens per day. Please try again in 24 hours.")
+            st.info("💡 Tip: The quota resets daily. Try uploading a smaller file or come back tomorrow.")
+        elif "429" in error_str:
+            st.error("⚠️ Too many requests. Please wait a minute and try again.")
+        else:
+            st.error(f"Something went wrong: {e}")
 
 if st.session_state.processing_done:
     st.markdown("""
