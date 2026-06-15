@@ -1,6 +1,6 @@
 streamlit
 python-dotenv
-groq
+google-genai
 PyMuPDF
 python-pptx
 python-docx

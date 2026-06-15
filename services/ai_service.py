@@ -1,22 +1,23 @@
 """
 ai_service.py
-Handles all AI calls using Groq API (llama-3.1-8b-instant).
+Handles all AI calls using Google Gemini 2.5 Flash (google-genai package).
 Loads prompt templates from prompts/ directory.
 Implements chunking for large content to avoid context overflow.
-Called by note_generator.py, pyq_analyzer.py, flashcard_generator.py,
-and question_bank_generator.py.
 """
 
-from groq import Groq
+from google import genai
 import os
 import json
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL = "llama-3.3-70b-versatile"
-CHUNK_SIZE = 4000
+# ── Gemini client ──
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_MODEL = "gemini-2.5-flash"
+
+CHUNK_SIZE = 28000
 PROMPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "prompts")
 
 
@@ -29,20 +30,19 @@ def load_prompt(filename: str) -> str:
     except Exception as e:
         raise RuntimeError(f"Could not load prompt {filename}: {e}")
 
-
-def call_groq(prompt: str) -> str:
-    """Sends a prompt to Groq and returns the response text."""
+def call_gemini(prompt: str) -> str:
+    """Sends a prompt to Gemini 2.5 Flash and returns response text."""
     try:
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=4096,
+        response = gemini_client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt
         )
-        return response.choices[0].message.content
+        return response.text
     except Exception as e:
-        print(f"[Groq Error] {e}")
+        print(f"[Gemini Error] {e}")
         return ""
+
+
 
 
 def chunk_text(text: str, chunk_size: int = CHUNK_SIZE) -> list:
@@ -70,11 +70,12 @@ def generate_notes(study_content: str) -> str:
     chunks = chunk_text(study_content)
     if len(chunks) == 1:
         prompt = prompt_template.replace("{content}", chunks[0])
-        return call_groq(prompt)
+        return call_gemini(prompt)
     results = []
     for chunk in chunks:
         prompt = prompt_template.replace("{content}", chunk)
-        results.append(call_groq(prompt))
+        results.append(call_gemini(prompt))
+        time.sleep(5)
     joined = "\n\n---\n\n".join(results)
     merge_prompt = f"""You are merging multiple sets of exam notes into one clean,
 deduplicated, well-structured Markdown document.
@@ -83,7 +84,7 @@ Output valid Markdown only. No commentary.
 
 NOTES TO MERGE:
 {joined}"""
-    return call_groq(merge_prompt)
+    return call_gemini(merge_prompt)
 
 
 def analyze_pyq(pyq_content: str, study_content: str) -> str:
@@ -91,7 +92,7 @@ def analyze_pyq(pyq_content: str, study_content: str) -> str:
     prompt_template = load_prompt("pyq_prompt.txt")
     prompt = prompt_template.replace("{pyq_content}", pyq_content)
     prompt = prompt.replace("{study_content}", study_content[:5000])
-    return call_groq(prompt)
+    return call_gemini(prompt)
 
 
 def generate_flashcards(study_content: str) -> list:
@@ -99,7 +100,7 @@ def generate_flashcards(study_content: str) -> list:
     prompt_template = load_prompt("flashcard_prompt.txt")
     chunk = chunk_text(study_content)[0]
     prompt = prompt_template.replace("{content}", chunk)
-    raw = call_groq(prompt)
+    raw = call_gemini(prompt)
     try:
         cleaned = raw.strip()
         if cleaned.startswith("```"):
@@ -110,25 +111,22 @@ def generate_flashcards(study_content: str) -> list:
             cleaned = cleaned[4:]
         return json.loads(cleaned)
     except Exception as e:
-        print(f"[Flashcard Parse Warning] Could not parse JSON response: {e}")
+        print(f"[Flashcard Parse Warning] Could not parse JSON: {e}")
         return []
 
 
-# Keep call_gemini as an alias so other files don't break
-call_gemini = call_groq
+# Keep aliases so other files don't break
 
 
 if __name__ == "__main__":
     test_content = """
     Normalization is the process of organizing data in a database.
-    It involves dividing large tables into smaller tables and
-    defining relationships between them.
     First Normal Form (1NF): Eliminate repeating groups.
     Second Normal Form (2NF): Eliminate redundant data.
     Third Normal Form (3NF): Eliminate columns not dependent on key.
     """
 
-    print("=== Testing note generation ===")
+    print("=== Testing Gemini note generation ===")
     notes = generate_notes(test_content)
     print(notes[:800])
 
@@ -136,4 +134,4 @@ if __name__ == "__main__":
     cards = generate_flashcards(test_content)
     print(f"Generated {len(cards)} flashcards")
     if cards:
-        print("Sample card:", cards[0])
+        print("Sample:", cards[0])
