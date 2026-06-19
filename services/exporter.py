@@ -2,12 +2,33 @@
 exporter.py
 Handles all export functionality for ExamNotes AI.
 Generates downloadable PDFs, CSV flashcards, and Anki export.
-Uses fpdf2 for PDF generation — no system dependencies required.
+Uses fpdf2 for PDF generation - no system dependencies required.
 """
 
 import csv
 import io
 from fpdf import FPDF
+
+
+def _sanitize(text) -> str:
+    """Replaces Unicode characters that fpdf2's default font can't render."""
+    if not isinstance(text, str):
+        text = str(text)
+    replacements = {
+        "\u2014": "-",   # em dash
+        "\u2013": "-",   # en dash
+        "\u2018": "'",   # left single quote
+        "\u2019": "'",   # right single quote
+        "\u201c": '"',   # left double quote
+        "\u201d": '"',   # right double quote
+        "\u2026": "...", # ellipsis
+        "\u2022": "*",   # bullet
+        "\u00a0": " ",   # non-breaking space
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    # Strip any remaining non-latin-1 characters
+    return text.encode("latin-1", "ignore").decode("latin-1")
 
 
 class NotesPDF(FPDF):
@@ -16,7 +37,7 @@ class NotesPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(13, 148, 136)
-        self.cell(0, 8, "ExamNotes AI", align="L")
+        self.cell(0, 8, _sanitize("ExamNotes AI"), align="L")
         self.ln(6)
         self.set_draw_color(226, 232, 240)
         self.line(10, self.get_y(), 200, self.get_y())
@@ -26,14 +47,14 @@ class NotesPDF(FPDF):
         self.set_y(-15)
         self.set_font("Helvetica", "I", 8)
         self.set_text_color(148, 163, 184)
-        self.cell(0, 10, f"Page {self.page_no()}", align="C")
+        self.cell(0, 10, _sanitize(f"Page {self.page_no()}"), align="C")
 
 
 def _parse_markdown_to_pdf(pdf: FPDF, text: str):
     """Parses basic Markdown and writes styled content to PDF."""
     lines = text.split("\n")
     for line in lines:
-        stripped = line.strip()
+        stripped = _sanitize(line.strip())
         if not stripped:
             pdf.ln(3)
         elif stripped.startswith("## "):
@@ -56,7 +77,7 @@ def _parse_markdown_to_pdf(pdf: FPDF, text: str):
         elif stripped.startswith("- ") or stripped.startswith("* "):
             pdf.set_font("Helvetica", "", 10)
             pdf.set_text_color(30, 41, 59)
-            pdf.multi_cell(0, 6, f"  \u2022  {stripped[2:]}")
+            pdf.multi_cell(0, 6, f"  *  {stripped[2:]}")
         elif stripped.startswith("**") and stripped.endswith("**"):
             pdf.set_font("Helvetica", "B", 10)
             pdf.set_text_color(30, 41, 59)
@@ -74,9 +95,9 @@ def export_notes_pdf(notes: str) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_text_color(13, 148, 136)
-    pdf.cell(0, 12, "Exam Notes", align="C")
+    pdf.cell(0, 12, _sanitize("Exam Notes"), align="C")
     pdf.ln(10)
-    _parse_markdown_to_pdf(pdf, notes)
+    _parse_markdown_to_pdf(pdf, _sanitize(notes))
     return bytes(pdf.output())
 
 
@@ -87,9 +108,9 @@ def export_pyq_pdf(pyq_report: str) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_text_color(13, 148, 136)
-    pdf.cell(0, 12, "PYQ Analysis Report", align="C")
+    pdf.cell(0, 12, _sanitize("PYQ Analysis Report"), align="C")
     pdf.ln(10)
-    _parse_markdown_to_pdf(pdf, pyq_report)
+    _parse_markdown_to_pdf(pdf, _sanitize(pyq_report))
     return bytes(pdf.output())
 
 
@@ -100,11 +121,11 @@ def export_flashcards_pdf(flashcards: list) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_text_color(13, 148, 136)
-    pdf.cell(0, 12, "Flashcards", align="C")
+    pdf.cell(0, 12, _sanitize("Flashcards"), align="C")
     pdf.ln(6)
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(100, 116, 139)
-    pdf.cell(0, 6, f"{len(flashcards)} flashcards generated", align="C")
+    pdf.cell(0, 6, _sanitize(f"{len(flashcards)} flashcards generated"), align="C")
     pdf.ln(10)
 
     difficulty_colors = {
@@ -114,28 +135,28 @@ def export_flashcards_pdf(flashcards: list) -> bytes:
     }
 
     for i, card in enumerate(flashcards, 1):
-        difficulty = card.get("difficulty", "easy").lower()
+        difficulty = _sanitize(card.get("difficulty", "easy")).lower()
         color = difficulty_colors.get(difficulty, (13, 148, 136))
 
-        # Card number and difficulty badge
+        topic = _sanitize(card.get("topic", ""))
+        question = _sanitize(card.get("question", ""))
+        answer = _sanitize(card.get("answer", ""))
+
         pdf.set_font("Helvetica", "B", 10)
         pdf.set_text_color(*color)
-        pdf.cell(0, 7, f"#{i}  [{difficulty.upper()}]  —  {card.get('topic', '')}")
+        pdf.cell(0, 7, f"#{i}  [{difficulty.upper()}]  -  {topic}")
         pdf.ln(5)
 
-        # Question
         pdf.set_font("Helvetica", "B", 10)
         pdf.set_text_color(30, 41, 59)
-        pdf.multi_cell(0, 6, f"Q: {card.get('question', '')}")
+        pdf.multi_cell(0, 6, f"Q: {question}")
         pdf.ln(2)
 
-        # Answer
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(71, 85, 105)
-        pdf.multi_cell(0, 6, f"A: {card.get('answer', '')}")
+        pdf.multi_cell(0, 6, f"A: {answer}")
         pdf.ln(2)
 
-        # Divider
         pdf.set_draw_color(226, 232, 240)
         pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(4)
@@ -150,7 +171,7 @@ def export_question_bank_pdf(questions: list) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_text_color(13, 148, 136)
-    pdf.cell(0, 12, "Question Bank", align="C")
+    pdf.cell(0, 12, _sanitize("Question Bank"), align="C")
     pdf.ln(10)
 
     two_mark = [q for q in questions if q.get("marks") == 2]
@@ -167,26 +188,30 @@ def export_question_bank_pdf(questions: list) -> bytes:
 
         pdf.set_font("Helvetica", "B", 13)
         pdf.set_text_color(13, 148, 136)
-        pdf.cell(0, 10, section_title)
+        pdf.cell(0, 10, _sanitize(section_title))
         pdf.ln(2)
         pdf.set_draw_color(13, 148, 136)
         pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(5)
 
         for i, q in enumerate(section_questions, 1):
+            question = _sanitize(q.get("question", ""))
+            topic = _sanitize(q.get("topic", ""))
+            hint = _sanitize(q.get("answer_hint", ""))
+
             pdf.set_font("Helvetica", "B", 10)
             pdf.set_text_color(30, 41, 59)
-            pdf.multi_cell(0, 6, f"Q{i}. {q.get('question', '')}")
+            pdf.multi_cell(0, 6, f"Q{i}. {question}")
             pdf.ln(1)
 
             pdf.set_font("Helvetica", "I", 9)
             pdf.set_text_color(71, 85, 105)
-            pdf.multi_cell(0, 6, f"Topic: {q.get('topic', '')}")
+            pdf.multi_cell(0, 6, f"Topic: {topic}")
             pdf.ln(1)
 
             pdf.set_font("Helvetica", "", 9)
             pdf.set_text_color(100, 116, 139)
-            pdf.multi_cell(0, 6, f"Hint: {q.get('answer_hint', '')}")
+            pdf.multi_cell(0, 6, f"Hint: {hint}")
 
             pdf.set_draw_color(226, 232, 240)
             pdf.line(10, pdf.get_y() + 2, 200, pdf.get_y() + 2)
