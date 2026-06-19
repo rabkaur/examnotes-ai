@@ -11,25 +11,35 @@ from fpdf import FPDF
 
 
 def _sanitize(text) -> str:
-    """Replaces Unicode characters that fpdf2's default font can't render."""
+    """Replaces Unicode characters that fpdf2's default font can't render
+    and breaks up overly long unbroken words that would overflow the page."""
     if not isinstance(text, str):
         text = str(text)
     replacements = {
-        "\u2014": "-",   # em dash
-        "\u2013": "-",   # en dash
-        "\u2018": "'",   # left single quote
-        "\u2019": "'",   # right single quote
-        "\u201c": '"',   # left double quote
-        "\u201d": '"',   # right double quote
-        "\u2026": "...", # ellipsis
-        "\u2022": "*",   # bullet
-        "\u00a0": " ",   # non-breaking space
+        "\u2014": "-",
+        "\u2013": "-",
+        "\u2018": "'",
+        "\u2019": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2026": "...",
+        "\u2022": "*",
+        "\u00a0": " ",
     }
     for old, new in replacements.items():
         text = text.replace(old, new)
-    # Strip any remaining non-latin-1 characters
-    return text.encode("latin-1", "ignore").decode("latin-1")
+    text = text.encode("latin-1", "ignore").decode("latin-1")
 
+    # Break up unbroken words longer than 60 chars to prevent overflow
+    words = text.split(" ")
+    safe_words = []
+    for word in words:
+        if len(word) > 60:
+            chunks = [word[i:i+60] for i in range(0, len(word), 60)]
+            safe_words.append(" ".join(chunks))
+        else:
+            safe_words.append(word)
+    return " ".join(safe_words)
 
 class NotesPDF(FPDF):
     """Custom PDF class with header and footer."""
