@@ -9,10 +9,9 @@ import csv
 import io
 from fpdf import FPDF
 
-
 def _sanitize(text) -> str:
     """Replaces Unicode characters that fpdf2's default font can't render
-    and breaks up overly long unbroken words that would overflow the page."""
+    and inserts breakable spaces into long unbroken words to prevent overflow."""
     if not isinstance(text, str):
         text = str(text)
     replacements = {
@@ -30,12 +29,12 @@ def _sanitize(text) -> str:
         text = text.replace(old, new)
     text = text.encode("latin-1", "ignore").decode("latin-1")
 
-    # Break up unbroken words longer than 60 chars to prevent overflow
+    # Insert a zero-width-safe break (space) into words longer than 40 chars
     words = text.split(" ")
     safe_words = []
     for word in words:
-        if len(word) > 60:
-            chunks = [word[i:i+60] for i in range(0, len(word), 60)]
+        if len(word) > 40:
+            chunks = [word[i:i+40] for i in range(0, len(word), 40)]
             safe_words.append(" ".join(chunks))
         else:
             safe_words.append(word)
