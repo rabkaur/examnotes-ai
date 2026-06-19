@@ -670,61 +670,45 @@ if st.session_state.processing_done:
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         if st.session_state.notes:
             st.download_button(
-                label="📄 Notes (MD)",
-                data=export_markdown(st.session_state.notes),
-                file_name="exam_notes.md",
-                mime="text/markdown",
+                label="📄 Exam Notes (PDF)",
+                data=export_notes_pdf(st.session_state.notes),
+                file_name="exam_notes.pdf",
+                mime="application/pdf",
                 use_container_width=True,
             )
 
     with col2:
-        if st.session_state.notes:
-            pdf_data = export_pdf(st.session_state.notes)
-            if pdf_data:
-                st.download_button(
-                    label="📕 Notes (PDF)",
-                    data=pdf_data,
-                    file_name="exam_notes.pdf",
-                    mime="application/pdf",
-                    use_container_width=True,
-                )
-            else:
-                st.caption("PDF unavailable")
+        if st.session_state.pyq_report:
+            st.download_button(
+                label="📊 PYQ Analysis (PDF)",
+                data=export_pyq_pdf(st.session_state.pyq_report),
+                file_name="pyq_analysis.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+            )
 
     with col3:
         if st.session_state.flashcards:
             st.download_button(
-                label="📊 Flashcards (CSV)",
-                data=export_flashcards_csv(st.session_state.flashcards),
-                file_name="flashcards.csv",
-                mime="text/csv",
+                label="🃏 Flashcards (PDF)",
+                data=export_flashcards_pdf(st.session_state.flashcards),
+                file_name="flashcards.pdf",
+                mime="application/pdf",
                 use_container_width=True,
             )
 
     with col4:
-        if st.session_state.flashcards:
-            st.download_button(
-                label="🃏 Flashcards (Anki)",
-                data=export_anki(st.session_state.flashcards),
-                file_name="flashcards_anki.txt",
-                mime="text/plain",
-                use_container_width=True,
-            )
-
-    with col5:
         if st.session_state.question_bank:
             st.download_button(
-                label="❓ Questions (CSV)",
-                data=export_question_bank_csv(
-                    st.session_state.question_bank
-                ),
-                file_name="question_bank.csv",
-                mime="text/csv",
+                label="❓ Question Bank (PDF)",
+                data=export_question_bank_pdf(st.session_state.question_bank),
+                file_name="question_bank.pdf",
+                mime="application/pdf",
                 use_container_width=True,
             )
 
