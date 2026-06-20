@@ -1,10 +1,27 @@
+# Secrets
 .env
+*.env
+.env.*
+!.env.example
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+
+# Venv
+venv/
+.venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Runtime data
 uploads/*
 !uploads/.gitkeep
 exports/*
 !exports/.gitkeep
-.DS_Store
-venv/
-*.egg-info/
