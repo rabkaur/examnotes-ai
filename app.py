@@ -55,6 +55,7 @@ _defaults = {
     "notes": "", "pyq_report": "", "flashcards": [], "question_bank": [],
     "study_content": "", "pyq_content": "", "processing_done": False,
     "section_errors": {}, "last_upload_names": [], "show_history": False,
+    "pending_generate": False, "pending_files": [],
 }
 for k, v in _defaults.items():
     if k not in st.session_state:
@@ -504,12 +505,16 @@ if oversized:
 
 _, btn_col, _ = st.columns([1, 6, 1])
 with btn_col:
-    gen_clicked = st.button(
+    if st.button(
         "generate notes, flashcards & question bank",
         type="primary",
         use_container_width=True,
         disabled=not bool(uploaded_files) or bool(oversized),
-    )
+    ):
+        # Set flag only — checkboxes render AFTER this, so we read them next rerun
+        st.session_state.pending_generate = True
+        st.session_state.pending_files = [f.name for f in (uploaded_files or [])]
+        st.rerun()
 
 # ── PYQ strip — shows only when files are uploaded ────────────────────────────
 if uploaded_files:
@@ -531,7 +536,7 @@ if uploaded_files:
                 st.checkbox(lbl, key=f"pyq_{f.name}")
 
 # ── Process ────────────────────────────────────────────────────────────────────
-if gen_clicked and uploaded_files and not oversized:
+if st.session_state.get('pending_generate') and uploaded_files and not oversized:
     with tempfile.TemporaryDirectory() as tmp_dir:
         saved_paths = []
         for file in uploaded_files:
@@ -629,6 +634,7 @@ if gen_clicked and uploaded_files and not oversized:
         update_log("Saved to history ✓","ok")
         update_log("All done!" if not section_errors else
                    f"Done with {len(section_errors)} error(s). Check tabs below.","ok")
+        st.session_state.pending_generate = False
         st.balloons()
         st.rerun()
 
