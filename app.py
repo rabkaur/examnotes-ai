@@ -496,6 +496,7 @@ if uploaded_files:
         st.session_state.study_content = ""
         st.session_state.pyq_content   = ""
         st.session_state.processing_done = False
+        st.session_state.pyq_selections = {}
         st.session_state.last_upload_names = current_names
 
 # ── Generate button ────────────────────────────────────────────────────────────
@@ -529,11 +530,16 @@ if uploaded_files:
         </div>
         """, unsafe_allow_html=True)
         pyq_cols = st.columns(min(len(uploaded_files), 4))
+        if "pyq_selections" not in st.session_state:
+            st.session_state.pyq_selections = {}
         for i, f in enumerate(uploaded_files):
             with pyq_cols[i % 4]:
                 size_mb = f.size / (1024*1024)
                 lbl = f.name if f.size <= MAX_FILE_BYTES else f"⚠️ {f.name} ({size_mb:.1f}MB)"
-                st.checkbox(lbl, key=f"pyq_{f.name}")
+                val = st.checkbox(lbl, key=f"pyq_{f.name}",
+                                  value=st.session_state.get(f"pyq_{f.name}", False))
+                # Write to a stable dict immediately
+                st.session_state.pyq_selections[f.name] = val
 
 # ── Process ────────────────────────────────────────────────────────────────────
 if st.session_state.get('pending_generate') and uploaded_files and not oversized:
@@ -545,9 +551,10 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
                 fh.write(file.getbuffer())
             saved_paths.append(path)
 
-        # Read PYQ flags directly from session_state
+        # Read from the stable pyq_selections dict written at render time
+        sel = st.session_state.get("pyq_selections", {})
         pyq_flags = {
-            path: bool(st.session_state.get(f"pyq_{file.name}", False))
+            path: bool(sel.get(file.name, False))
             for file, path in zip(uploaded_files, saved_paths)
         }
 
