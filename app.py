@@ -14,11 +14,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from services.file_parser import extract_all
 from services.note_generator import run_note_generator
-from services.pyq_analyzer import run_pyq_analyzer
 from services.flashcard_generator import run_flashcard_generator
 from services.question_bank_generator import run_question_bank_generator
 from services.exporter import (
-    export_notes_pdf, export_pyq_pdf, export_flashcards_pdf,
+    export_notes_pdf, export_flashcards_pdf,
     export_question_bank_pdf, export_markdown,
     export_flashcards_csv, export_anki, export_question_bank_csv,
 )
@@ -52,8 +51,8 @@ def save_history(entry: dict):
 
 # ── Session state ──────────────────────────────────────────────────────────────
 _defaults = {
-    "notes": "", "pyq_report": "", "flashcards": [], "question_bank": [],
-    "study_content": "", "pyq_content": "", "processing_done": False,
+    "notes": "", "flashcards": [], "question_bank": [],
+    "study_content": "", "processing_done": False,
     "section_errors": {}, "last_upload_names": [], "show_history": False,
     "pending_generate": False, "pending_files": [],
 }
@@ -451,11 +450,9 @@ if st.session_state.show_history:
             with c2:
                 if st.button("Restore", key=f"restore_{i}", type="secondary"):
                     st.session_state.notes          = entry.get("notes","")
-                    st.session_state.pyq_report     = entry.get("pyq_report","")
                     st.session_state.flashcards     = entry.get("flashcards",[])
                     st.session_state.question_bank  = entry.get("question_bank",[])
                     st.session_state.study_content  = entry.get("study_content","")
-                    st.session_state.pyq_content    = entry.get("pyq_content","")
                     st.session_state.processing_done = True
                     st.session_state.section_errors = {}
                     st.session_state.show_history   = False
@@ -494,9 +491,7 @@ if uploaded_files:
         st.session_state.flashcards    = []
         st.session_state.question_bank = []
         st.session_state.study_content = ""
-        st.session_state.pyq_content   = ""
         st.session_state.processing_done = False
-        st.session_state.pyq_selections = {}
         st.session_state.last_upload_names = current_names
 
 # ── Generate button ────────────────────────────────────────────────────────────
@@ -517,29 +512,7 @@ with btn_col:
         st.session_state.pending_files = [f.name for f in (uploaded_files or [])]
         st.rerun()
 
-# ── PYQ strip — shows only when files are uploaded ────────────────────────────
-if uploaded_files:
-    _, pyq_col, _ = st.columns([1, 6, 1])
-    with pyq_col:
-        st.markdown("""
-        <div style="margin-top:0.75rem;">
-            <div style="font-size:0.7rem;font-weight:700;color:#0D9488;
-                 text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
-                🎯 Tag question papers — tick any file that is a previous year paper
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        pyq_cols = st.columns(min(len(uploaded_files), 4))
-        if "pyq_selections" not in st.session_state:
-            st.session_state.pyq_selections = {}
-        for i, f in enumerate(uploaded_files):
-            with pyq_cols[i % 4]:
-                size_mb = f.size / (1024*1024)
-                lbl = f.name if f.size <= MAX_FILE_BYTES else f"⚠️ {f.name} ({size_mb:.1f}MB)"
-                val = st.checkbox(lbl, key=f"pyq_{f.name}",
-                                  value=st.session_state.get(f"pyq_{f.name}", False))
-                # Write to a stable dict immediately
-                st.session_state.pyq_selections[f.name] = val
+
 
 # ── Process ────────────────────────────────────────────────────────────────────
 if st.session_state.get('pending_generate') and uploaded_files and not oversized:
@@ -551,12 +524,7 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
                 fh.write(file.getbuffer())
             saved_paths.append(path)
 
-        # Read from the stable pyq_selections dict written at render time
-        sel = st.session_state.get("pyq_selections", {})
-        pyq_flags = {
-            path: bool(sel.get(file.name, False))
-            for file, path in zip(uploaded_files, saved_paths)
-        }
+        pyq_flags = {path: False for path in saved_paths}
 
         _, log_col, _ = st.columns([1, 6, 1])
         with log_col:
@@ -576,11 +544,6 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
         st.session_state.study_content = extracted["study_content"]
         st.session_state.pyq_content   = extracted["pyq_content"]
 
-        tagged = [f.name for f, p in zip(uploaded_files, saved_paths) if pyq_flags.get(p)]
-        if tagged:
-            update_log(f"PYQ detected: {', '.join(tagged)}", "ok")
-        else:
-            update_log("No PYQ tagged — skipping PYQ analysis", "spin")
 
         for name, err in extracted.get("errors", []):
             update_log(f"{name}: {err}", "err")
@@ -605,9 +568,7 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
                 pool.submit(_run,"flashcards",run_flashcard_generator,st.session_state.study_content):"flashcards",
                 pool.submit(_run,"question_bank",run_question_bank_generator,st.session_state.study_content):"question_bank",
             }
-            if st.session_state.pyq_content.strip():
-                futures[pool.submit(_run,"pyq",run_pyq_analyzer,
-                    st.session_state.pyq_content,st.session_state.study_content)] = "pyq"
+
 
             for future in as_completed(futures):
                 name, result, error = future.result()
@@ -616,7 +577,6 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
                     update_log(f"{name}: failed — {error[:100]}", "err")
                 else:
                     if name=="notes":         st.session_state.notes         = result or ""
-                    elif name=="pyq":         st.session_state.pyq_report    = result or ""
                     elif name=="flashcards":  st.session_state.flashcards    = result or []
                     elif name=="question_bank": st.session_state.question_bank = result or []
                     update_log(f"{name}: done ✓","ok")
@@ -631,11 +591,9 @@ if st.session_state.get('pending_generate') and uploaded_files and not oversized
             "flashcard_count":len(st.session_state.flashcards),
             "question_count": len(st.session_state.question_bank),
             "notes":          st.session_state.notes,
-            "pyq_report":     st.session_state.pyq_report,
             "flashcards":     st.session_state.flashcards,
             "question_bank":  st.session_state.question_bank,
             "study_content":  st.session_state.study_content[:5000],
-            "pyq_content":    st.session_state.pyq_content[:2000],
         })
 
         update_log("Saved to history ✓","ok")
@@ -650,8 +608,8 @@ if st.session_state.processing_done:
     st.markdown("<div class='results-wrap'>", unsafe_allow_html=True)
     st.markdown('<div class="results-header">Your Study Package</div>', unsafe_allow_html=True)
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📝 Notes", "📊 PYQ", "🃏 Flashcards", "❓ Q-Bank", "📈 Stats & Downloads"
+    tab1, tab3, tab4, tab5 = st.tabs([
+        "📝 Notes", "🃏 Flashcards", "❓ Q-Bank", "📈 Stats & Downloads"
     ])
 
     with tab1:
@@ -670,24 +628,6 @@ if st.session_state.processing_done:
             st.markdown(st.session_state.notes)
         else:
             st.info("No notes yet.")
-
-    with tab2:
-        _, rg = st.columns([5,1])
-        with rg:
-            if st.session_state.pyq_content and st.button("↻ Regen", key="regen_pyq", type="secondary"):
-                with st.spinner("Regenerating..."):
-                    try:
-                        st.session_state.pyq_report = run_pyq_analyzer(
-                            st.session_state.pyq_content, st.session_state.study_content)
-                        st.session_state.section_errors.pop("pyq",None)
-                        st.rerun()
-                    except Exception as e: st.error(str(e))
-        if "pyq" in st.session_state.section_errors:
-            st.markdown(f'<div class="section-error">⚠️ {st.session_state.section_errors["pyq"]}</div>',unsafe_allow_html=True)
-        elif st.session_state.pyq_report:
-            st.markdown(st.session_state.pyq_report)
-        else:
-            st.info("No question papers were tagged. Tick the PYQ checkbox next to a file before generating.")
 
     with tab3:
         _, rg = st.columns([5,1])
@@ -760,11 +700,10 @@ if st.session_state.processing_done:
             st.info("No question bank yet.")
 
     with tab5:
-        c1,c2,c3,c4 = st.columns(4)
+        c1,c2,c3 = st.columns(3)
         c1.metric("Characters", f"{len(st.session_state.study_content):,}")
         c2.metric("Flashcards", len(st.session_state.flashcards))
         c3.metric("Questions",  len(st.session_state.question_bank))
-        c4.metric("PYQ", "Yes" if st.session_state.pyq_content else "No")
         if st.session_state.section_errors:
             for sec, err in st.session_state.section_errors.items():
                 st.error(f"**{sec}**: {err}")
@@ -776,9 +715,6 @@ if st.session_state.processing_done:
             if st.session_state.notes:
                 st.download_button("📄 Notes PDF",export_notes_pdf(st.session_state.notes),"exam_notes.pdf","application/pdf",use_container_width=True)
         with c2:
-            if st.session_state.pyq_report:
-                st.download_button("📊 PYQ PDF",export_pyq_pdf(st.session_state.pyq_report),"pyq_analysis.pdf","application/pdf",use_container_width=True)
-        with c3:
             if st.session_state.flashcards:
                 st.download_button("🃏 Flashcards PDF",export_flashcards_pdf(st.session_state.flashcards),"flashcards.pdf","application/pdf",use_container_width=True)
         with c4:
