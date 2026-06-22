@@ -29,6 +29,71 @@ MAX_HISTORY = 5
 st.set_page_config(page_title="ExamNotes AI", page_icon="📚",
                    layout="wide", initial_sidebar_state="collapsed")
 
+# ── Full-page drag and drop ────────────────────────────────────────────────────
+st.markdown("""
+<style>
+#drag-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(13, 148, 136, 0.08);
+    border: 2.5px dashed #0D9488;
+    border-radius: 16px;
+    margin: 12px;
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+#drag-overlay.active { display: flex; align-items: center; justify-content: center; }
+#drag-overlay-label {
+    color: #0D9488; font-size: 1.2rem; font-weight: 700;
+    letter-spacing: 0.02em; pointer-events: none;
+}
+</style>
+<div id="drag-overlay"><div id="drag-overlay-label">Drop files anywhere</div></div>
+<script>
+(function() {
+    let dragCounter = 0;
+    const overlay = document.getElementById('drag-overlay');
+
+    document.addEventListener('dragenter', function(e) {
+        e.preventDefault();
+        dragCounter++;
+        overlay.classList.add('active');
+    });
+    document.addEventListener('dragleave', function(e) {
+        dragCounter--;
+        if (dragCounter <= 0) {
+            dragCounter = 0;
+            overlay.classList.remove('active');
+        }
+    });
+    document.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
+    document.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dragCounter = 0;
+        overlay.classList.remove('active');
+
+        const files = e.dataTransfer.files;
+        if (!files || files.length === 0) return;
+
+        // Find Streamlit's file input
+        const input = document.querySelector('input[type="file"]');
+        if (!input) return;
+
+        // Use DataTransfer to assign files to the input
+        const dt = new DataTransfer();
+        for (let i = 0; i < files.length; i++) {
+            dt.items.add(files[i]);
+        }
+        input.files = dt.files;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+})();
+</script>
+""", unsafe_allow_html=True)
+
+
 # ── History helpers ────────────────────────────────────────────────────────────
 def load_history() -> list:
     try:
